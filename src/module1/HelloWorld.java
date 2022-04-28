@@ -36,6 +36,9 @@ public class HelloWorld extends PApplet
 	UnfoldingMap map2;
 
 	public void setup() {
+		// yzernik: This line fixes OpenGL issue.
+		System.setProperty("jogl.disable.openglcore", "true");  // yoni
+		
 		size(800, 600, P2D);  // Set up the Applet window to be 800x600
 		                      // The OPENGL argument indicates to use the 
 		                      // Processing library's 2D drawing
