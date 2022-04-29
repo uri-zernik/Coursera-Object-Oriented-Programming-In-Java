@@ -1,7 +1,9 @@
 package module3;
 
+import java.awt.Component;
 //Java utilities libraries
 import java.util.ArrayList;
+import java.util.Iterator;
 //import java.util.Collections;
 //import java.util.Comparator;
 import java.util.List;
@@ -13,11 +15,12 @@ import processing.core.PApplet;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.data.PointFeature;
+import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
-
+import de.fhpotsdam.utils.Integrator;
 //Parsing library
 import parsing.ParseFeed;
 
@@ -74,6 +77,22 @@ public class EarthquakeCityMap extends PApplet {
 	    //Use provided parser to collect properties for each earthquake
 	    //PointFeatures have a getLocation method
 	    List<PointFeature> earthquakes = ParseFeed.parseEarthquake(this, earthquakesURL);
+	    
+	    /** first try **/
+	    // create a marker for the first e.q.
+	    PointFeature eq = earthquakes.get(0);	    
+	    // CONVERT E.Q. to simple marker
+	    SimplePointMarker mark1 = createMarker(eq);
+	    // add to list of markers
+	    markers.add(mark1);
+	    
+	    /** second try **/ 
+	    Iterator<PointFeature> eqIterator = earthquakes.iterator();
+	    while (eqIterator.hasNext()) {
+	    	PointFeature eqI = eqIterator.next();
+	    	SimplePointMarker markI = createMarker(eqI);
+	    	markers.add(markI);
+	    }  
 	    
 	    //TODO (Step 3): Add a loop here that calls createMarker (see below) 
 	    // to create a new SimplePointMarker for each PointFeature in 
