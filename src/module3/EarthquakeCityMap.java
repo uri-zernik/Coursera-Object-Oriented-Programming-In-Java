@@ -80,11 +80,18 @@ public class EarthquakeCityMap extends PApplet {
 	    
 	    /** first try **/
 	    // create a marker for the first e.q.
-	    PointFeature eq = earthquakes.get(0);	    
+	    PointFeature eq = earthquakes.get(0);	
+	    eq.putProperty("boy",  5.2);
+	    double boy1 = (double) eq.getProperty("boy");
 	    // CONVERT E.Q. to simple marker
 	    SimplePointMarker mark1 = createMarker(eq);
 	    // add to list of markers
 	    markers.add(mark1);
+	        
+	    //TODO (Step 3): Add a loop here that calls createMarker (see below) 
+	    // to create a new SimplePointMarker for each PointFeature in 
+	    // earthquakes.  Then add each new SimplePointMarker to the 
+	    // List markers (so that it will be added to the map in the line below)
 	    
 	    /** second try **/ 
 	    Iterator<PointFeature> eqIterator = earthquakes.iterator();
@@ -93,13 +100,6 @@ public class EarthquakeCityMap extends PApplet {
 	    	SimplePointMarker markI = createMarker(eqI);
 	    	markers.add(markI);
 	    }  
-	    
-	    //TODO (Step 3): Add a loop here that calls createMarker (see below) 
-	    // to create a new SimplePointMarker for each PointFeature in 
-	    // earthquakes.  Then add each new SimplePointMarker to the 
-	    // List markers (so that it will be added to the map in the line below)
-	    
-	    
 	    // Add the markers to the map so that they are displayed
 	    map.addMarkers(markers);
 	}
@@ -129,6 +129,7 @@ public class EarthquakeCityMap extends PApplet {
 		// Here is an example of how to use Processing's color method to generate 
 	    // an int that represents the color yellow.  
 	    int yellow = color(255, 255, 0);
+	    int blue = color(230,230,250);
 		
 		// TODO (Step 4): Add code below to style the marker's size and color 
 	    // according to the magnitude of the earthquake.  
@@ -137,7 +138,8 @@ public class EarthquakeCityMap extends PApplet {
 	    // Rather than comparing the magnitude to a number directly, compare 
 	    // the magnitude to these variables (and change their value in the code 
 	    // above if you want to change what you mean by "moderate" and "light")
-	    
+	    if (mag > THRESHOLD_MODERATE) marker.setColor(yellow);
+	    else if (mag > THRESHOLD_LIGHT) marker.setColor(blue);
 	    
 	    // Finally return the marker
 	    return marker;
