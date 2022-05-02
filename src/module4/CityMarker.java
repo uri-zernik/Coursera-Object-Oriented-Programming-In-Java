@@ -32,6 +32,7 @@ public class CityMarker extends SimplePointMarker {
 	/**
 	 * Implementation of method to draw marker on the map.
 	 */
+	private int rr = 10;
 	public void draw(PGraphics pg, float x, float y) {
 		// Save previous drawing style
 		pg.pushStyle();
@@ -46,6 +47,8 @@ public class CityMarker extends SimplePointMarker {
 		// whose upper left corner is at position x, y
 		// Check out the processing documentation for more methods
 		
+		pg.line(x - rr/4, y, x + rr/4, y);
+		pg.line(x, y - rr/4, x, y + rr/4);
 		
 		// Restore previous drawing style
 		pg.popStyle();

@@ -1,7 +1,9 @@
 package module4;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.data.Feature;
@@ -35,7 +37,7 @@ public class EarthquakeCityMap extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	// IF YOU ARE WORKING OFFILINE, change the value of this variable to true
-	private static final boolean offline = false;
+	private static final boolean offline = true;
 	
 	/** This is where to find the local tiles, for working without an Internet connection */
 	public static String mbTilesString = "blankLight-1-3.mbtiles";
@@ -60,7 +62,14 @@ public class EarthquakeCityMap extends PApplet {
 	// A List of country markers
 	private List<Marker> countryMarkers;
 	
+	private Map<Marker, Integer> country2EQ = new HashMap<Marker, Integer>();
+	
+	int landEQNo = 0;
+	int oceanEQNo = 0;
+	
 	public void setup() {		
+		// yzernik: This line fixes OpenGL issue.
+		System.setProperty("jogl.disable.openglcore", "true");  // yoni
 		// (1) Initializing canvas and map tiles
 		size(900, 700, OPENGL);
 		if (offline) {
@@ -80,7 +89,7 @@ public class EarthquakeCityMap extends PApplet {
 		//earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
-		//earthquakesURL = "quiz1.atom";
+		earthquakesURL = "quiz1.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -111,7 +120,7 @@ public class EarthquakeCityMap extends PApplet {
 	    }
 
 	    // could be used for debugging
-	    printQuakes();
+	    printQuakes(earthquakes);
 	 		
 	    // (3) Add markers to map
 	    //     NOTE: Country markers are not added to the map.  They are used
@@ -152,6 +161,7 @@ public class EarthquakeCityMap extends PApplet {
 		text("5.0+ Magnitude", 75, 125);
 		text("4.0+ Magnitude", 75, 175);
 		text("Below 4.0", 75, 225);
+		
 	}
 
 	
@@ -168,14 +178,16 @@ public class EarthquakeCityMap extends PApplet {
 		// country in m.  Notice that isInCountry takes a PointFeature
 		// and a Marker as input.  
 		// If isInCountry ever returns true, isLand should return true.
-		for (Marker m : countryMarkers) {
+		boolean result = false;
+		for (Marker cm : countryMarkers) {
 			// TODO: Finish this method using the helper method isInCountry
-			
+			boolean found = isInCountry(earthquake, cm);
+			result = result || found;
 		}
 		
 		
 		// not inside any country
-		return false;
+		return result;
 	}
 	
 	/* prints countries with number of earthquakes as
@@ -184,8 +196,49 @@ public class EarthquakeCityMap extends PApplet {
 	 * ...
 	 * OCEAN QUAKES: numOceanQuakes
 	 * */
-	private void printQuakes() 
+	private void printQuakes(List<PointFeature> earthquakes) 
 	{
+	    int ii = 0;
+		for (Marker cm : countryMarkers) {	
+			//System.out.println("ii="+ii++ +": COUNTRY cm="+cm.getProperty("country")+":");
+			for (PointFeature eq: earthquakes) {
+				//System.out.println("PPP eq="+eq.getProperty("country")+" cm="+cm+":");
+				boolean found = isInCountry(eq, cm);
+				if (found) {
+					int curr;
+					boolean keyExists = country2EQ.containsKey(cm);
+					if (keyExists) {
+						curr = country2EQ.get(cm);
+						country2EQ.put(cm, ++curr);
+						//System.out.println("FOUND ke="+keyExists+" eq="+eq.getProperty("country")+" cm="+cm+" curr="+curr+ "new_curr="+new_curr+":");
+					} else {
+						curr = 0;
+						country2EQ.put(cm, ++curr);
+					}
+					cm.setProperty("country", eq.getProperty("country"));
+
+					//System.out.println("FOUND ke="+keyExists+" eq="+eq.getProperty("country")+" cm="+cm+" curr="+curr+1+ ":");
+
+				}
+			}
+		}
+		for (PointFeature eq: earthquakes) {
+			if (isLand(eq)) {
+				landEQNo++;
+			} else {
+				oceanEQNo++;
+			}
+		}
+		int iii = 0;
+		for (Map.Entry<Marker, Integer> set : country2EQ.entrySet()) {
+	 
+	            // Printing all elements of a Map
+		    System.out.println("i="+iii+++" Country EQ: " + set.getKey().getProperty("country") + " = " + set.getValue());
+	        
+		}
+		System.out.println("LAND="+landEQNo+":");
+		System.out.println("OCEA="+oceanEQNo+":");
+
 		// TODO: Implement this method
 		// One (inefficient but correct) approach is to:
 		//   Loop over all of the countries, e.g. using 
@@ -212,7 +265,7 @@ public class EarthquakeCityMap extends PApplet {
 		//        String country = (String)m.getProperty("country");
 		
 		
-	}
+	} // printQuakes
 	
 	
 	
