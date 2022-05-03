@@ -35,7 +35,7 @@ public class EarthquakeCityMap extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	// IF YOU ARE WORKING OFFILINE, change the value of this variable to true
-	private static final boolean offline = false;
+	private static final boolean offline = true;
 	
 	/** This is where to find the local tiles, for working without an Internet connection */
 	public static String mbTilesString = "blankLight-1-3.mbtiles";
@@ -63,6 +63,8 @@ public class EarthquakeCityMap extends PApplet {
 	private CommonMarker lastClicked;
 	
 	public void setup() {		
+		// yzernik: This line fixes OpenGL issue.
+		System.setProperty("jogl.disable.openglcore", "true");  // yoni
 		// (1) Initializing canvas and map tiles
 		size(900, 700, OPENGL);
 		if (offline) {
@@ -123,6 +125,76 @@ public class EarthquakeCityMap extends PApplet {
 		
 	}
 	
+	/** The event handler for mouse clicks
+	 * It will display an earthquake and its threat circle of cities
+	 * Or if a city is clicked, it will display all the earthquakes 
+	 * where the city is in the threat circle
+	 */
+	@Override
+	public void mouseClicked()
+	{
+		// TODO: Implement this method
+		System.out.println("MS CLICKED");
+		clickCity(cityMarkers);
+		// Hint: You probably want a helper method or two to keep this code
+		// from getting too long/disorganized
+	}
+	
+	
+	// change the status of the clicked city
+	private void clickCity(List<Marker> cityMarkers) {
+		String cityName = (lastClicked == null ? null : ((CityMarker)lastClicked).getCity());
+		System.out.println("IN CLICKED CITY lastClicked="+cityName+":");
+		int ii = 0;
+		boolean foundCity = false;
+		for(Marker marker : cityMarkers) {
+			if (foundCity == false) {
+				Location loc = marker.getLocation();
+				float x1 = map.getScreenPositionFromLocation(marker.getLocation())[0];
+				float y1 = map.getScreenPositionFromLocation(marker.getLocation())[1];
+				//System.out.println("NOT lastClicked="+lastClicked+":");
+
+				if (lastClicked == null) {
+					float delta = (float)8.0;
+					if (mouseX >  x1 -delta && mouseX < x1+delta && mouseY > y1-delta && mouseY < y1+delta) {
+						lastClicked = (CommonMarker) marker;
+						foundCity = true;
+					} else {
+						lastClicked = null;
+					}
+				} else {
+					lastClicked = null; foundCity = true;
+				}
+			}// foundCity
+		}// for cities
+		cityName = (lastClicked == null ? null : ((CityMarker)lastClicked).getCity());
+		System.out.println("OUT CLICKED CITY lastClicked="+cityName+":");
+		if (lastClicked != null) {
+			for(Marker marker : cityMarkers) {
+				if (marker != lastClicked) {
+					marker.setHidden(true);
+				}
+			}
+			for(Marker marker : quakeMarkers) {
+				System.out.println("DISTANCE="+marker.getDistanceTo(lastClicked.getLocation())
+					+": eq="+marker.getLocation()
+					+": city="+lastClicked.getLocation()
+					+":");
+				if (marker.getDistanceTo(lastClicked.getLocation()) > 2000.00) {
+					marker.setHidden(true);
+				}
+			}
+		} else {
+			for(Marker marker : cityMarkers) {
+				marker.setHidden(false);
+			}
+			for(Marker marker : quakeMarkers) {
+				marker.setHidden(false);
+			}
+		}
+
+	} // clickCity()
+	
 	/** Event handler that gets called automatically when the 
 	 * mouse moves.
 	 */
@@ -139,27 +211,73 @@ public class EarthquakeCityMap extends PApplet {
 		selectMarkerIfHover(cityMarkers);
 	}
 	
+	private void hoverCity(List<Marker> cityMarkers) {
+		int ii = 0;
+		for(Marker marker : cityMarkers) {
+			if (
+					//|| marker != null && marker.isHidden() == false 
+					lastSelected == null || lastSelected.isSelected() != true
+					) {
+				Location loc = marker.getLocation();
+				float x1 = map.getScreenPositionFromLocation(marker.getLocation())[0];
+				float y1 = map.getScreenPositionFromLocation(marker.getLocation())[1];
+				//System.out.println("NOT msX="+ mouseX + " : X1=" + x1 + ":  msY="+ mouseY + " : Y1=" +  y1 + " : rd=" + marker.getProperty("radius")+ " : ls=" +lastSelected+":");
+
+
+				float delta = (float)8.0;
+				if (mouseX >  x1 -delta && mouseX < x1+delta && mouseY > y1-delta && mouseY < y1+delta) {
+					lastSelected = (CommonMarker) marker;
+					lastSelected.setSelected(true);
+					System.out.println("FOUND CITY msX"+ mouseX + " : X1=" + x1 + ":  msY="+ mouseY + " : Y1=" +  y1 + " : rd=" + marker.getProperty("radius")+ " : ls=" +lastSelected+":");
+				} else {
+					if (lastSelected != null) lastSelected.setSelected(false);
+
+				}
+			}
+		}// for cities
+	} // hoverCity()
+	
+	private void hoverEQ(List<Marker> quakeMarkers) {
+		int ii = 0;
+		for(Marker marker : quakeMarkers) {
+			if (
+					//|| marker != null && marker.isHidden() == false 
+					lastSelected == null || lastSelected.isSelected() != true
+					) {
+				Location loc = marker.getLocation();
+				float x1 = map.getScreenPositionFromLocation(marker.getLocation())[0];
+				float y1 = map.getScreenPositionFromLocation(marker.getLocation())[1];
+				//System.out.println("NOT msX="+ mouseX + " : X1=" + x1 + ":  msY="+ mouseY + " : Y1=" +  y1 + " : rd=" + marker.getProperty("radius")+ " : ls=" +lastSelected+":");
+
+
+				float delta = Math.min((float)marker.getProperty("radius"),  (float)8.0);
+				if (mouseX >  x1 -delta && mouseX < x1+delta && mouseY > y1-delta && mouseY < y1+delta) {
+					lastSelected = (CommonMarker) marker;
+					lastSelected.setSelected(true);
+					//System.out.println("FOUND EQ msX"+ mouseX + " : X1=" + x1 + ":  msY="+ mouseY + " : Y1=" +  y1 + " : rd=" + marker.getProperty("radius")+ " : ls=" +lastSelected+":");
+				} else {
+					if (lastSelected != null) lastSelected.setSelected(false);
+
+				}
+			}
+		}// for eqs
+	} // hoverEQ
+	
+	
 	// If there is a marker under the cursor, and lastSelected is null 
 	// set the lastSelected to be the first marker found under the cursor
 	// Make sure you do not select two markers.
 	// 
+	@SuppressWarnings("deprecation")
 	private void selectMarkerIfHover(List<Marker> markers)
 	{
-		// TODO: Implement this method
-	}
+		// TODO: Implement this method  DONE
+		hoverEQ(quakeMarkers);
+		hoverCity(cityMarkers);
+
+	} // selectMarkerIfHover
 	
-	/** The event handler for mouse clicks
-	 * It will display an earthquake and its threat circle of cities
-	 * Or if a city is clicked, it will display all the earthquakes 
-	 * where the city is in the threat circle
-	 */
-	@Override
-	public void mouseClicked()
-	{
-		// TODO: Implement this method
-		// Hint: You probably want a helper method or two to keep this code
-		// from getting too long/disorganized
-	}
+
 	
 	
 	// loop over and unhide all markers
