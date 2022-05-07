@@ -1,5 +1,7 @@
 package module6;
 
+import java.util.List;
+
 import de.fhpotsdam.unfolding.data.PointFeature;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -10,7 +12,7 @@ import processing.core.PGraphics;
  *
  */
 // TODO: Implement the comparable interface
-public abstract class EarthquakeMarker extends CommonMarker
+public abstract class EarthquakeMarker extends CommonMarker implements Comparable<EarthquakeMarker>
 {
 	
 	// Did the earthquake occur on land?  This will be set by the subclasses.
@@ -56,7 +58,11 @@ public abstract class EarthquakeMarker extends CommonMarker
 	}
 	
 	// TODO: Add the method:
-	// public int compareTo(EarthquakeMarker marker)
+	public int compareTo(EarthquakeMarker marker) {
+		int ret = (int)(100000*(marker.getMagnitude() - this.getMagnitude()));
+		System.out.println("CCC "+ret+":  aa="+marker.getMagnitude()+":  :"+this.getMagnitude()+":");
+		return ret;
+	}
 	
 	
 	// calls abstract method drawEarthquake and then checks age and draws X if needed

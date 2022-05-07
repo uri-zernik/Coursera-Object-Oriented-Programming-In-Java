@@ -14,7 +14,7 @@ import processing.core.PGraphics;
  * MOOC team
  *
  */
-public class AirportMarker extends CommonMarker {
+public class AirportMarker extends CommonMarker implements Comparable<EarthquakeMarker>{
 	public static List<SimpleLinesMarker> routes;
 	
 	public AirportMarker(Feature city) {
@@ -37,6 +37,15 @@ public class AirportMarker extends CommonMarker {
 		// show routes
 		
 		
+	}
+
+	@Override
+	public int compareTo(EarthquakeMarker arg0) {
+		// TODO Auto-generated method stub
+		//return 0;
+		int ret = 0;
+
+		return ret;
 	}
 	
 }

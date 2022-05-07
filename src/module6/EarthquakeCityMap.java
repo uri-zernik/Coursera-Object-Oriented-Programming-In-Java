@@ -36,7 +36,7 @@ public class EarthquakeCityMap extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	// IF YOU ARE WORKING OFFILINE, change the value of this variable to true
-	private static final boolean offline = false;
+	private static final boolean offline = true;
 	
 	/** This is where to find the local tiles, for working without an Internet connection */
 	public static String mbTilesString = "blankLight-1-3.mbtiles";
@@ -60,12 +60,29 @@ public class EarthquakeCityMap extends PApplet {
 
 	// A List of country markers
 	private List<Marker> countryMarkers;
-	
 	// NEW IN MODULE 5
 	private CommonMarker lastSelected;
 	private CommonMarker lastClicked;
 	
+	private void sortAndPrint() {
+		Object[] qa = quakeMarkers.toArray();
+		int ll = qa.length;
+		System.out.println("LL="+ll+":");
+		int ii;
+		for (ii = 0; false && ii < qa.length && ii < 3; ii++) {
+			System.out.println("QA0 ii="+ ii +":" +qa.toString()+": mag="+ ((EarthquakeMarker) (qa[ii])).getMagnitude()+":");
+		}
+		Arrays.sort(qa,0, 150);
+		System.out.println("\n\n");
+		for (ii = 0; ii < qa.length && ii < 150; ii++) {
+			System.out.println("QA1 ii="+ ii +":" +qa.toString()+": mag="+ ((EarthquakeMarker) (qa[ii])).getMagnitude()+":");
+		}
+	}
+	
 	public void setup() {		
+		// yzernik: This line fixes OpenGL issue.
+		System.setProperty("jogl.disable.openglcore", "true");  // yoni
+
 		// (1) Initializing canvas and map tiles
 		size(900, 700, OPENGL);
 		if (offline) {
@@ -115,6 +132,8 @@ public class EarthquakeCityMap extends PApplet {
 		  }
 	    }
 
+		sortAndPrint();
+		
 	    // could be used for debugging
 	    printQuakes();
 	 		

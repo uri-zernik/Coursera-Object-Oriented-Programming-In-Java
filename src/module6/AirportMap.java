@@ -28,6 +28,8 @@ public class AirportMap extends PApplet {
 	List<Marker> routeList;
 	
 	public void setup() {
+		// yzernik: This line fixes OpenGL issue.
+		System.setProperty("jogl.disable.openglcore", "true");  // yoni
 		// setting up PAppler
 		size(800,600, OPENGL);
 		
@@ -37,6 +39,7 @@ public class AirportMap extends PApplet {
 		
 		// get features from airport data
 		List<PointFeature> features = ParseFeed.parseAirports(this, "airports.dat");
+		
 		
 		// list for markers, hashmap for quicker access when matching with routes
 		airportList = new ArrayList<Marker>();
@@ -53,7 +56,6 @@ public class AirportMap extends PApplet {
 			airports.put(Integer.parseInt(feature.getId()), feature.getLocation());
 		
 		}
-		
 		
 		// parse route data
 		List<ShapeFeature> routes = ParseFeed.parseRoutes(this, "routes.dat");
