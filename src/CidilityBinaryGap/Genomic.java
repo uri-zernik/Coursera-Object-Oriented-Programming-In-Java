@@ -2,6 +2,7 @@ package CidilityBinaryGap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class Genomic 
 {
@@ -68,6 +69,20 @@ public class Genomic
 	}
 	
 	private static void endSeq(ArrayList<Integer> openList, ArrayList<Integer>[] qList, int ii) {
+		Iterator<Integer> fruitIterator = openList.iterator();
+		ArrayList<Integer> myQ = qList[ii];
+		if (myQ != null) {
+			for (Integer qq: myQ) {
+				while (fruitIterator.hasNext()) {
+					Integer oo = fruitIterator.next();
+					// System.out.println(fruit);
+					if (qq == oo) {
+						fruitIterator.remove();
+					}
+				}
+			}
+		}
+		/**
 		ArrayList<Integer> myQ = qList[ii];
 		if (myQ != null) {
 			for (Integer qq : myQ) {
@@ -79,7 +94,7 @@ public class Genomic
 					}
 				}
 			}
-		}
+		}**/
 		printOpenList(openList,5);	
 	
 	} // endSeq()
