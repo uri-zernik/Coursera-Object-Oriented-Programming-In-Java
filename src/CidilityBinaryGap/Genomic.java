@@ -14,7 +14,7 @@ public class Genomic
 		System.out.println("Žilina");	
 		int kk = 0;
 		int[] sr = solution(SS, PP, QQ);
-		printResultArray(sr, 3, 5);
+		printResultArray(sr, 3, 5, -1);
 		
 	}
 	
@@ -24,15 +24,13 @@ public class Genomic
 
 		int NN = SS.length();
 		int MM = PP.length;
-		
-		//new ArrayList<Integer>[100000];
-			
+				
 		int[] priceArray = new int[300]; // for each letter in ascii its corresponding price
 		priceArray['A'] = 1;
 		priceArray['C'] = 2;
 		priceArray['G'] = 3;
 		priceArray['T'] = 4;
-		int maxVal = 5; // constant larger than 4
+		int maxVal = 5; // constant larger than the biggest val
 		
 		int[] resultArray = new int[50000]; // the results per query, direct access
 		ArrayList<Integer> openList = new ArrayList<Integer>(); // the list of queries that are open (assumed to be a short list)		
@@ -50,8 +48,6 @@ public class Genomic
 	
 	private static void startSeq(ArrayList<Integer> openList, ArrayList<Integer>[] pList, int ii ) {
 			
-		printOpenList(openList,0);
-
 		ArrayList<Integer> myP = pList[ii];
 		if (myP != null) {
 			for (Integer pp : myP) {
@@ -66,7 +62,7 @@ public class Genomic
 			int val = resultArray[oo];
 			if (val == 0) resultArray[oo] = maxVal;
 			resultArray[oo] = Math.min(resultArray[oo], priceArray[SS.charAt(ii)]);
-			printResultArray(resultArray,0, MM);
+			printResultArray(resultArray,0, MM, ii);
 			System.out.println("================ 	RA  loc=" + ii + ": oo=" +oo+ ": val=" + val + ":");
 		}
 	}
@@ -118,9 +114,9 @@ public class Genomic
 
 	}
 	
-	private static void printResultArray(int[] resultArray, int nn, int MM) {
+	private static void printResultArray(int[] resultArray, int nn, int MM, int ii) {
 		int ll = resultArray.length;
-		System.out.print("            resultArray"+nn+" l="+MM+":  ");
+		System.out.print("            resultArray"+nn+" ii="+ii+":");
 		//for (Integer rr: resultArray) {
 		for (int rr = 0; rr < MM; rr++) {
 			if (resultArray[rr] == 0) break;
