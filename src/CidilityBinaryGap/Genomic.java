@@ -123,7 +123,7 @@ public class Genomic
 		System.out.print("            resultArray"+nn+" l="+MM+":  ");
 		//for (Integer rr: resultArray) {
 		for (int rr = 0; rr < MM; rr++) {
-	
+			if (resultArray[rr] == 0) break;
 			System.out.print(":"+resultArray[rr]);
 		}
 		System.out.println(":");	
