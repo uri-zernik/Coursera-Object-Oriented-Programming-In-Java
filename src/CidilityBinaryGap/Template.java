@@ -12,11 +12,12 @@ public class Template
 	public static void main(String[] args) {
 		System.out.println("Žilina");	
 		int kk = 0;
-		solution(myArray,kk);
+		Template template = new Template();;
+		template.solution(myArray,kk);
 		
 	}
 	
-	public static int[] solution(int[] aa, int kk) {
+	public int[] solution(int[] aa, int kk) {
 
 		return aa;
 	}
